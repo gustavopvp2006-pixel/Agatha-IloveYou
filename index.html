@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#060208"><title>Love You ❤️</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#060208;color:#fff;font-family:Arial,sans-serif}body{display:grid;place-items:center}canvas{display:block;width:100vw;height:100dvh;touch-action:manipulation}.hint{position:fixed;bottom:max(14px,env(safe-area-inset-bottom));left:0;right:0;text-align:center;color:#d8a5b2;font-size:12px;opacity:.75;pointer-events:none;letter-spacing:.08em}
+</style></head><body><canvas id="love"></canvas><div class="hint">feito com amor ❤️</div>
+<script>
+(()=>{
+const canvas=document.getElementById('love'),ctx=canvas.getContext('2d');
+const BG='#060208', phrases=['I love you','Seni seviyorum','Te amo',"Je t'aime",'Ich liebe dich','Ti amo','Eu te amo','Я тебя люблю','사랑해','愛してる','我爱你','मैं तुमसे प्यार करता हूँ',"Σ’ αγαπώ",'Ik hou van jou','Jag älskar dig','Kocham cię','ฉันรักเธอ','Anh yêu em','Aku cinta kamu','Я тебе кохаю'];
+let W=0,H=0,dpr=1,items=[],start=performance.now(),last=0;
+function heart(t){return {x:16*Math.sin(t)**3,y:-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))}}
+function resize(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);build()}
+function inside(x,y){let xx=x/16, yy=-y/16;return (xx*xx+yy*yy-1)**3-xx*xx*yy**3<=0}
+function build(){items=[];let scale=Math.min(W/39,H/37)*.88;let cx=W/2,cy=H/2+Math.min(H*.04,20);let size=Math.max(7,Math.min(12,W/34));let row=size*1.45;let n=0;
+for(let y=-17;y<=15;y+=row/scale){for(let x=-18;x<=18;x+=size*.55/scale){if(inside(x/16,y/16)){let xx=cx+x*scale, yy=cy+y*scale;let phrase=phrases[n++%phrases.length];let fs=size*(.78+Math.random()*.28);ctx.font=`bold ${fs}px Arial`;let width=ctx.measureText(phrase).width;if(Math.random()<.13)continue;items.push({x:xx,y:yy,text:phrase,size:fs,color:`hsl(${348+Math.random()*12} ${85+Math.random()*15}% ${36+Math.random()*23}%)`,delay:Math.random()*1800,phase:Math.random()*6.28,width})}}}
+items.sort((a,b)=>Math.random()-.5)}
+function frame(now){ctx.fillStyle=BG;ctx.fillRect(0,0,W,H);let elapsed=now-start;for(const p of items){let u=Math.max(0,Math.min(1,(elapsed-p.delay)/1250));if(!u)continue;let e=1-(1-u)**3;let alpha=Math.min(1,u*1.7);let lift=(1-e)*Math.min(25,H*.035);let flash=Math.max(0,Math.sin((now/800)+p.phase))*.16;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`bold ${p.size}px Arial`;ctx.shadowColor=p.color;ctx.shadowBlur=3+flash*12;ctx.globalAlpha=alpha;ctx.fillStyle=p.color;ctx.fillText(p.text,p.x,p.y+lift);if(u>=1&&Math.sin(now/900+p.phase)>.96){ctx.fillStyle='#ffd0d8';ctx.globalAlpha=.85;ctx.fillText(p.text,p.x,p.y+lift)} }
+ctx.globalAlpha=1;ctx.shadowBlur=0;requestAnimationFrame(frame)}
+addEventListener('resize',resize);canvas.addEventListener('click',()=>{start=performance.now();build()});resize();requestAnimationFrame(frame);
+})();
+</script></body></html>
